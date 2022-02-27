@@ -40,13 +40,10 @@ ogk download bill --id <bill-id>
 ogk download bills --from 2021-01-01 --to 2021-12-31
 ```
 
-### 3. 데이터 관리하기(WIP)
-- [ ] sync bill
-- [ ] sync bills
+### 3. 데이터 관리하기
 
 ```bash
-ogk sync bill --id <bill-id>
-ogk sync bills --from 2021-01-01 --to 2021-12-31
+ogk sync --from 2021-01-01 --to 2021-12-31
 ```
 
 ## Roadmap
@@ -57,8 +54,8 @@ ogk sync bills --from 2021-01-01 --to 2021-12-31
 ### 2. 파일 관리
 - [ ] 로컬 파일 관리 기능(원격 저장소와 분리)
 
-### 3. 스케쥴러
-- [ ] 스케쥴러 관리 명령어 개발
+### 3. database 정규화
+- [ ] 
 
 ## 외부 라이브러리
 - [clap](https://docs.rs/clap/3.0.0-beta.2/clap): rust cli builder
