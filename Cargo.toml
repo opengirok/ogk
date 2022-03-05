@@ -33,5 +33,5 @@ indicatif = "0.16"
 console = "0.15"
 
 [[bin]]
-name = "main"
+name = "ogk"
 path = "src/main.rs"
