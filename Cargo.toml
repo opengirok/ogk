@@ -1,8 +1,14 @@
 [package]
+description = "cli tool for open.go.kr"
 name = "ogk"
 version = "0.1.0"
 authors = ["pretty00butt <hoonyland.newsletter@gmail.com>"]
 edition = "2021"
+license-file = "LICENSE"
+homepage = "https://githb.com/opengirok/ogk"
+documentation = "https://githb.com/opengirok/ogk"
+repository = "https://githb.com/opengirok/ogk"
+readme = "README.md"
 
 [dependencies]
 async-trait = "0.1.52"
