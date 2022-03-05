@@ -3,7 +3,7 @@ use crate::utils::auth::AuthConfig;
 use clap::{AppSettings, Subcommand};
 
 #[derive(Subcommand)]
-#[clap(author, version, about, long_about = None)]
+#[clap(about = "(required) Authenticate for open.go.kr", author, long_about = None, version)]
 pub enum Commands {
   #[clap(setting(AppSettings::ArgRequiredElseHelp))]
   Login {

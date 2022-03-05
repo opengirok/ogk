@@ -10,7 +10,7 @@ use std::error::Error;
 use std::time::Instant;
 
 #[derive(Subcommand)]
-#[clap(author, version, about, long_about = None)]
+#[clap(about = "(config reuqired) Download files which are open on open.go.kr", author, long_about = None, version)]
 pub enum Commands {
   #[clap(setting(AppSettings::ArgRequiredElseHelp))]
   Bill {

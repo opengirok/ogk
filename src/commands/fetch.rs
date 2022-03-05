@@ -5,7 +5,7 @@ use clap::{AppSettings, Subcommand};
 use std::error::Error;
 
 #[derive(Subcommand)]
-#[clap(author, version, about, long_about = None)]
+#[clap(about = "Fetch query to open.go.kr", author, long_about = None, version)]
 pub enum Commands {
   #[clap(setting(AppSettings::ArgRequiredElseHelp))]
   Bill {

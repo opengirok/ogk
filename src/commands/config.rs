@@ -3,7 +3,7 @@ use clap::{AppSettings, Subcommand};
 use std::error::Error;
 
 #[derive(Subcommand)]
-#[clap(author, version, about, long_about = None)]
+#[clap(about = "Configurations", author, long_about = None, version)]
 pub enum Commands {
   List,
   #[clap(setting(AppSettings::ArgRequiredElseHelp))]

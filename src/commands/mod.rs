@@ -17,6 +17,7 @@ pub enum Commands {
   Download(download::Commands),
   #[clap(subcommand)]
   Fetch(fetch::Commands),
+  #[clap(about = "Syncronize data on open.go.kr with Supabase database", author, long_about = None, version)]
   Sync(sync::Commands),
 }
 
