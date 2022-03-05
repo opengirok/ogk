@@ -5,7 +5,7 @@ use clap::{AppSettings, Subcommand};
 #[derive(Subcommand)]
 #[clap(about = "(required) Authenticate for open.go.kr", author, long_about = None, version)]
 pub enum Commands {
-  #[clap(setting(AppSettings::ArgRequiredElseHelp))]
+  #[clap(about = "Login on open.go.kr with a valid account", setting(AppSettings::ArgRequiredElseHelp))]
   Login {
     #[clap(short = 'u', long = "username")]
     username: String,

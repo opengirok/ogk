@@ -5,8 +5,9 @@ use std::error::Error;
 #[derive(Subcommand)]
 #[clap(about = "Configurations", author, long_about = None, version)]
 pub enum Commands {
+  #[clap(about = "Display all config list")]
   List,
-  #[clap(setting(AppSettings::ArgRequiredElseHelp))]
+  #[clap(about = "Configuration to manage files",setting(AppSettings::ArgRequiredElseHelp))]
   Files {
     #[clap(long = "local-repository", required = false)]
     local_repository: Option<String>,

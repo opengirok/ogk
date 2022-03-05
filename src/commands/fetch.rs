@@ -7,11 +7,12 @@ use std::error::Error;
 #[derive(Subcommand)]
 #[clap(about = "Fetch query to open.go.kr", author, long_about = None, version)]
 pub enum Commands {
-  #[clap(setting(AppSettings::ArgRequiredElseHelp))]
+  #[clap(about = "Fetch a bill with id", setting(AppSettings::ArgRequiredElseHelp))]
   Bill {
     #[clap(long = "id")]
     id: String,
   },
+  #[clap(about = "Fetch bills with date range", setting(AppSettings::ArgRequiredElseHelp))]
   Bills {
     #[clap(long = "from", required = false)]
     from: Option<String>,

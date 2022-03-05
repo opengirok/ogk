@@ -10,13 +10,14 @@ use std::error::Error;
 use std::time::Instant;
 
 #[derive(Subcommand)]
-#[clap(about = "(config reuqired) Download files which are open on open.go.kr", author, long_about = None, version)]
+#[clap(about = "(config required) Download files which are open on open.go.kr", author, long_about = None, version)]
 pub enum Commands {
-  #[clap(setting(AppSettings::ArgRequiredElseHelp))]
+  #[clap(about = "download file if exists on the bill with id", setting(AppSettings::ArgRequiredElseHelp))]
   Bill {
     #[clap(long = "id")]
     id: String,
   },
+  #[clap(about = "download files if exists on bills with date range")]
   Bills {
     #[clap(long = "from", required = false)]
     from: Option<String>,
