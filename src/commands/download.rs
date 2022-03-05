@@ -1,7 +1,6 @@
 use crate::client::{self, BillReturnType};
 use crate::files::FileManager;
 use crate::utils::date;
-use crate::utils::log;
 use crate::utils::progress;
 use chrono::prelude::*;
 use clap::{AppSettings, Subcommand};
