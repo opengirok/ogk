@@ -1,4 +1,4 @@
-# ogk - cli for [open.go.kr <대한민국 정보공개플랫폼>](https://open.go.kr)
+# ogk - cli tool for [open.go.kr](https://open.go.kr)
 [정보공개플랫폼](https://open.go.kr) 계정이 있고 를랫폼을 자주 사용하는 사용자라면 공식웹사이트보다 편리하게 데이터 및 파일을 관리할 수 있도록 돕기 위한 프로젝트입니다.
 
 ### 설정하기
