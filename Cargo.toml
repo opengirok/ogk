@@ -1,7 +1,7 @@
 [package]
 description = "cli tool for open.go.kr"
 name = "ogk"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["pretty00butt <hoonyland.newsletter@gmail.com>"]
 edition = "2021"
 license-file = "LICENSE"
@@ -33,5 +33,5 @@ indicatif = "0.16"
 console = "0.15"
 
 [[bin]]
-name = "main"
+name = "ogk"
 path = "src/main.rs"
