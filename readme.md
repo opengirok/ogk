@@ -36,7 +36,8 @@ ogk config --local-repository /Path/to/local/repository
 ogk config --remote-repository user_or_org-name/repository_name
 
 # 3. supabase (데이터베이스) 설정
-# supabase에서 발급받은 host, api key를 환경변수로 등록합니다.
+# [Supabase 설정하기](docs/supabase.md) 문서를 참고하여 Supabase 설정을 먼저 완료하시길 바랍니다.
+# 위 설정 후 Supabase에서 발급받은 host, api key를 환경변수로 등록합니다.
 export OGK_SUPABASE_API_KEY=
 export OGK_SUPABASE_HOST=
 
