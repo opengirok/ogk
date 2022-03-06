@@ -16,6 +16,7 @@ pub struct BillRow {
     pub proc_person_class: Option<String>,
     pub proc_person_name: Option<String>,
 
+    pub dept_sn: Option<String>,
     pub open_type: Option<String>,
     pub open_status: Option<String>,
     pub open_status_code: Option<String>,
@@ -66,6 +67,7 @@ impl BillRow {
         BillRow {
             group_id: Some(group_id),
             notice_date: Some(bill.nticeDt.clone()),
+            dept_sn: Some(bill.deptSn.clone()),
             open_date: Some(open_date.replace(".", "-")),
             open_date_reason: Some(bill.othbcDtApnResnNm.clone()),
             open_status: Some(bill.insttRqestProcStNm.clone()),

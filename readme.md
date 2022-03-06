@@ -1,6 +1,22 @@
 # ogk - cli tool for [open.go.kr](https://open.go.kr)
 [정보공개플랫폼](https://open.go.kr) 계정이 있고 를랫폼을 자주 사용하는 사용자라면 공식웹사이트보다 편리하게 데이터 및 파일을 관리할 수 있도록 돕기 위한 프로젝트입니다.
 
+### 설치하기
+: 현재 `ogk`는 [Homebrew](https://brew.sh/) 혹은 [Cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html)를 통해서 설치가 가능합니다.
+
+##### `homebrew`
+
+```bash
+brew tap opengirok/ogk
+brew install ogk
+```
+
+##### `cargo`
+
+```bash
+cargo install ogk
+```
+
 ### 설정하기
 
 ```bash
@@ -21,8 +37,13 @@ ogk config --remote-repository user_or_org-name/repository_name
 
 # 3. supabase (데이터베이스) 설정
 # supabase에서 발급받은 host, api key를 환경변수로 등록합니다.
-export OGK_SUPABASE_API_KEY={SUPABASE_API_KEY}
-export OGK_SUPABASE_HOST={SUPABASE_HOST}
+export OGK_SUPABASE_API_KEY=
+export OGK_SUPABASE_HOST=
+
+# 4. SLACK 알림 설정
+# Slack Webhook을 생성한 뒤 URL을 환경변수로 설정합니다.
+# 각 명령 뒤에 `--with-slack-notification true` 를 붙이면 슬랙 알림이 함께 갑니다.
+export OGK_SLACK_WEBHOOK_URL=
 
 ```
 
@@ -34,14 +55,10 @@ export OGK_SUPABASE_HOST={SUPABASE_HOST}
 
 
 ### 사용하기
+
 ##### 1. 조회하기
 
-- 단건 조회하기
-```bash
-ogk fetch bill --id <bill-id>
-```
-
-- 복수건 조회하기(날짜 & 페이지 단위 조회)
+- 날짜 & 페이지 단위 조회
 ```bash
 ogk fetch bills --from 2021-01-01 --to 2020-12-31 --page 1
 ```
@@ -50,15 +67,20 @@ ogk fetch bills --from 2021-01-01 --to 2020-12-31 --page 1
 : [설정하기](#설정하기)에서 파일관리를 위한 설정이 선행되어야 합니다.
 
 ```bash
-ogk download bill --id <bill-id>
-ogk download bills --from 2021-01-01 --to 2021-12-31
+ogk download --from 2021-01-01 --to 2021-12-31
 ```
 
 ##### 3. 데이터 조회 및 저장하기
 : [설정하기](#설정하기)에서 supabase 등록 및 설정이 선행되어야 합니다.
 
 ```bash
+
+# 1. 기본 조회 및 저장
 ogk sync --from 2021-01-01 --to 2021-12-31
+
+# (개발중) 2. 현재 설정된 Supabase 데이터베이스에서 통지완료되지 않은 건들만 새로 업데이트
+# `--from`과 `--to` 옵션을 지정하지 않습니다.
+ogk sync
 ```
 
 ### Roadmap

@@ -9,11 +9,10 @@ pub mod supabase;
 
 #[async_trait]
 pub trait DatabaseClient {
-  async fn find(
+  async fn get(
     &self,
     table_name: &str,
-    index_from: &i32,
-    index_to: &i32,
+    query: Option<&str>,
   ) -> Result<reqwest::Response, reqwest::Error>;
 
   async fn post<T: Debug + Serialize + Send>(
@@ -47,10 +46,16 @@ pub async fn create_bills<C: DatabaseClient>(
   }
 }
 
-// pub async fn find_bills<R: Serialize + Send, C: DatabaseClient>(
-//   database: C,
-//   page: &i32,
-//   page_size: &i32,
-// ) -> Result<Vec<models::BillRow>, reqwest::Error> {
-//   unimplemented!();
-// }
+pub async fn find_bills<C: DatabaseClient>(
+  database_client: &C,
+  query: &str,
+) -> Result<Vec<models::BillRow>, reqwest::Error> {
+  let response = database_client.get("bills", Some(query)).await;
+  match response {
+    Ok(result) => result.json::<Vec<models::BillRow>>().await,
+    Err(e) => {
+      eprintln!("{}", e);
+      Err(e)
+    }
+  }
+}

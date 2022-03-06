@@ -1,3 +1,5 @@
+#![allow(unused_must_use)]
+
 mod client;
 mod commands;
 mod database;

@@ -47,16 +47,14 @@ impl Supabase {
 
 #[async_trait]
 impl DatabaseClient for Supabase {
-  async fn find(
+  async fn get(
     &self,
     table_name: &str,
-    index_from: &i32,
-    index_to: &i32,
+    query_string: Option<&str>,
   ) -> Result<reqwest::Response, reqwest::Error> {
     let builder = self
       .client
-      .get(format!("{}/rest/v1/{}", &self.host, table_name))
-      .header("Range", format!("{}-{}", index_from, index_to));
+      .get(format!("{}/rest/v1/{}?{}", &self.host, table_name, query_string.unwrap_or_default()));
 
     builder.send().await
   }
@@ -83,14 +81,16 @@ mod tests {
   use crate::client::DtlVo;
   use crate::database::models::BillRow;
 
-  #[ignore]
-  async fn test_find() {
+  #[tokio::test]
+  async fn test_get() {
     let supabase = Supabase::new();
-    let response = supabase.find("bills", &0, &1).await;
+    let query = "open_status_code=in.%28\"121\",\"131\"%29";
+    let response = supabase.get("bills", Some(query)).await;
     match response {
       Ok(r) => {
         let bills = r.json::<Vec<BillRow>>().await.unwrap();
-        assert_eq!(bills.len(), 2);
+        println!("{:?}", bills);
+        assert_eq!(bills.len(), 1);
       }
       Err(e) => {
         eprintln!("{}", e);
