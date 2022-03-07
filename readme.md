@@ -1,6 +1,12 @@
 # ogk - cli tool for [open.go.kr](https://open.go.kr)
 [정보공개플랫폼](https://open.go.kr) 계정이 있고 를랫폼을 자주 사용하는 사용자라면 공식웹사이트보다 편리하게 데이터 및 파일을 관리할 수 있도록 돕기 위한 프로젝트입니다.
 
+
+### 후원하기
+- [정보공개센터 후원하기](https://www.opengirok.or.kr/)
+- [ogk 기여자](https://hoony.land)에게 [커피 한 잔 사주기](https://www.buymeacoffee.com/pretty00butt)
+
+
 ### 설치하기
 : 현재 `ogk`는 [Homebrew](https://brew.sh/) 혹은 [Cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html)를 통해서 설치가 가능합니다.
 
@@ -96,7 +102,11 @@ ogk sync
 
 ### 기여자
  
-- [pretty00butt](hoony.land)
+[pretty00butt](hoony.land)
+
+<a href="https://www.buymeacoffee.com/pretty00butt" target="_blank">
+<img src="https://user-images.githubusercontent.com/1366161/156967861-490ed2cb-fa3c-4ef1-acee-6b7649ccdcf9.png" width="25%" />
+</a>
  
 ### License
 
