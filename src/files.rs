@@ -1,4 +1,4 @@
-use crate::client::{BillWithFiles, Client};
+use crate::client::{BillWithFiles, Client, DntcFile};
 use crate::utils::{config, date};
 use async_trait::async_trait;
 use bytes::Bytes;
@@ -102,29 +102,34 @@ impl<'a> FileManager<'a> {
 
     pub async fn download(
         &self,
-        client: &Client,
         bill: &BillWithFiles,
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    ) -> Result<Option<Vec<DntcFile>>, Box<dyn std::error::Error>> {
+        let client = Client::new();
         let config = config::Config::load_or_new()?;
         match config.remote_file_repository {
             Some(_) => {
+                let mut downloaded_files: Vec<DntcFile> = vec![];
                 let fm = FileManager::new().await.unwrap();
+
                 if let Some(ref file_list) = bill.atchFileList {
                     for file in &*file_list {
-                        let downloaded = client
-                            .download_file(&bill.dtlVo.rqestProcRegstrNo, &file.fileUploadNo)
-                            .await?;
-                        let _ = fm.save(&downloaded, bill, &file.uploadFileOrginlNm);
+                        if fm.has_downloaded(bill, &file.uploadFileOrginlNm) == false {
+                            let downloaded = client
+                                .download_file(&bill.dtlVo.rqestProcRegstrNo, &file.fileUploadNo)
+                                .await?;
+                            let _ = fm.save(&downloaded, bill, &file.uploadFileOrginlNm);
+                            downloaded_files.push(file.clone());
+                        }
                     }
 
-                    Ok(())
+                    Ok(Some(downloaded_files))
                 } else {
-                    Ok(())
+                    Ok(Some(downloaded_files))
                 }
             }
             None => {
                 eprintln!("청구파일을 다운로드 하려면 원격저장소 주소를 먼저 설정해주세요.");
-                Ok(())
+                Ok(None)
             }
         }
     }
@@ -179,15 +184,21 @@ impl<'a> FileManager<'a> {
             downloadable_bill.get_filename(orig_file_name)
         );
 
-        // TODO: 이미 다운로드 받은 파일 skip
-        match create_dir(Path::new(&dir_path)) {
-            Ok(_) => {}
-            Err(_) => {}
-        };
-
+        create_dir(Path::new(&dir_path)).unwrap_or_default();
         let mut local_file = File::create(&file_path)?;
         io::copy(&mut downloaded_file.as_ref(), &mut local_file)?;
         Ok(local_file)
+    }
+
+    fn has_downloaded<T: Downloadable>(&self, downloadable_bill: &T, orig_file_name: &str) -> bool {
+        let dir_path = format!("{}/{}", &self._local_path, downloadable_bill.get_dirname(),);
+        let file_path = format!(
+            "{}/{}",
+            &dir_path,
+            downloadable_bill.get_filename(orig_file_name)
+        );
+
+        return Path::new(&file_path).exists();
     }
 
     fn remote_callbaks(&self) -> RemoteCallbacks<'a> {

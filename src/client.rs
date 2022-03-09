@@ -143,7 +143,7 @@ pub struct DtlVo {
     pub rqestSj: String,           // 요청 제목 ex) 최저임금 위원회 회의록 및 속기록 (JE)
 }
 
-#[derive(serde::Deserialize, serde::Serialize, Debug)]
+#[derive(Clone, serde::Deserialize, serde::Serialize, Debug)]
 pub struct DntcFile {
     pub atchmnflByteCo: String,     // '100081',
     pub atchmnflPrsrvNm: String,    // '202007171546284220000.zip',

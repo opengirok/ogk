@@ -1,4 +1,4 @@
-use crate::client::{self, BillReturnType};
+use crate::client::{self, BillReturnType, DntcFile};
 use crate::files::FileManager;
 use crate::utils::date;
 use crate::utils::log;
@@ -59,7 +59,6 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
 
     let fm = FileManager::new().await.unwrap();
     let total_count = &response.vo.totalPage;
-    let mut download_count = 0;
 
     log::print(
         &format!(
@@ -72,6 +71,7 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
     .await;
 
     let pb = ProgressBar::new(*total_count as u64);
+    let mut downloaded_files: Vec<DntcFile> = vec![];
 
     match client
         .fetch_bills(&init_page, &from_date, &to_date, total_count)
@@ -91,8 +91,9 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
                         .await?;
                     match _response_bill {
                         BillReturnType::BillWithFiles(response) => {
-                            let _result = fm.download(&client, &response).await.unwrap();
-                            download_count = download_count + 1;
+                            let mut _result =
+                                fm.download(&response).await.unwrap().unwrap_or_default();
+                            downloaded_files.append(&mut _result);
                         }
                         _ => {}
                     };
@@ -103,14 +104,15 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
 
             log::print(
                 &format!(
-                    "DOWNLOAD [3/4] {} 다운로드한 파일을 원격 저장소에 저장합니다.",
+                    "DOWNLOAD [3/4] {}다운로드한 총 {}개의 파일을 원격 저장소에 저장합니다.",
                     progress::WRITE,
+                    downloaded_files.len()
                 ),
                 &print_type,
             )
             .await;
 
-            if download_count > 0 {
+            if downloaded_files.len() > 0 {
                 let _result2 = fm.upload().await;
             }
         }
@@ -119,12 +121,18 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
         }
     };
 
+    let downloaded_file_names = downloaded_files
+        .iter()
+        .map(|d| format!("- {}", d.uploadFileOrginlNm))
+        .collect::<Vec<String>>()
+        .join("\n");
+
     log::print(
         &format!(
-            "DOWNLOAD [4/4] {} 총 {}건 다운로드 및 원격 저장소 업로드 완료! - {}",
+            "DOWNLOAD [4/4] {}다운로드 및 원격 저장소 업로드 완료! - {}\n{}",
             progress::SPARKLE,
-            download_count,
-            HumanDuration(started.elapsed())
+            HumanDuration(started.elapsed()),
+            &downloaded_file_names
         ),
         &print_type,
     )
