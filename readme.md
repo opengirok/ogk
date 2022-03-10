@@ -34,12 +34,12 @@ ogk auth login --username <username> --password <password>
 # 2. 파일 관리 설정
 # 내컴퓨터에 저장할 파일 위치를 지정합니다.
 # 기본값: ~/.ogk/.data
-ogk config --local-repository /Path/to/local/repository
+ogk config files --local-repository /Path/to/local/repository
 
 # 3.에서 생성한 원격저장소 주소를 지정합니다.
 # 현재 버전(v0.1)에서는 원격저장소가 반드시 지정되어야 파일 관리가 가능합니다.
-# 예: ogk config repository hoonyland/data
-ogk config --remote-repository user_or_org-name/repository_name
+# 예: ogk config files --remote-repository hoonyland/data
+ogk config files --remote-repository <user_or_org-name/repository_name>
 
 # 3. supabase (데이터베이스) 설정
 # [Supabase 설정하기](docs/supabase.md) 문서를 참고하여 Supabase 설정을 먼저 완료하시길 바랍니다.
