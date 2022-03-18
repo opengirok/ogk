@@ -81,7 +81,6 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
             for bill in &response.list {
                 pb.inc(1);
 
-                if &bill.deptSn == "2" {
                     let _response_bill = client
                         .fetch_a_bill(
                             &bill.rqestProcRegstrNo,
@@ -97,7 +96,6 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
                         }
                         _ => {}
                     };
-                }
             }
 
             pb.finish_and_clear();
