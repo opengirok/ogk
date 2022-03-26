@@ -114,9 +114,7 @@ impl<'a> FileManager<'a> {
                 if let Some(ref file_list) = bill.atchFileList {
                     for file in &*file_list {
                         if fm.has_downloaded(bill, &file.uploadFileOrginlNm) == false {
-                            let downloaded = client
-                                .download_file(&bill.dtlVo.rqestProcRegstrNo, &file.fileUploadNo)
-                                .await?;
+                            let downloaded = client.download_file(file).await?;
                             let _ = fm.save(&downloaded, bill, &file.uploadFileOrginlNm);
                             downloaded_files.push(file.clone());
                         }

@@ -81,21 +81,20 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
             for bill in &response.list {
                 pb.inc(1);
 
-                    let _response_bill = client
-                        .fetch_a_bill(
-                            &bill.rqestProcRegstrNo,
-                            &bill.insttRqestProcStCd,
-                            &bill.deptSn,
-                        )
-                        .await?;
-                    match _response_bill {
-                        BillReturnType::BillWithFiles(response) => {
-                            let mut _result =
-                                fm.download(&response).await.unwrap().unwrap_or_default();
-                            downloaded_files.append(&mut _result);
-                        }
-                        _ => {}
-                    };
+                let _response_bill = client
+                    .fetch_a_bill(
+                        &bill.rqestProcRegstrNo,
+                        &bill.insttRqestProcStCd,
+                        &bill.deptSn,
+                    )
+                    .await?;
+                match _response_bill {
+                    BillReturnType::BillWithFiles(response) => {
+                        let mut _result = fm.download(&response).await.unwrap().unwrap_or_default();
+                        downloaded_files.append(&mut _result);
+                    }
+                    _ => {}
+                };
             }
 
             pb.finish_and_clear();

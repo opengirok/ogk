@@ -293,19 +293,12 @@ impl Client {
         Ok(())
     }
 
-    pub async fn download_file(
-        &self,
-        rqest_proc_regstr_no: &str,
-        file_upload_no: &str,
-    ) -> Result<Bytes, Error> {
-        let pre_params = &[("rqestProcRegstrNo", rqest_proc_regstr_no)];
-        self.client
-            .post("https://www.open.go.kr/rqestMlrd/rqestDtls/updateReqstInfoCnfirmDt.ajax")
-            .form(pre_params)
-            .send()
-            .await?;
+    pub async fn download_file(&self, file: &DntcFile) -> Result<Bytes, Error> {
+        let params = &[
+            ("fileUploadNo", &file.fileUploadNo),
+            ("fileSn", &file.fileSn),
+        ];
 
-        let params = &[("fileUploadNo", &file_upload_no), ("fileSn", &"1")];
         self.client
             .post(DOWNLOAD_HOST)
             .form(params)
