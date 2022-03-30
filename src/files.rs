@@ -102,9 +102,9 @@ impl<'a> FileManager<'a> {
 
     pub async fn download(
         &self,
+        client: &Client,
         bill: &BillWithFiles,
     ) -> Result<Option<Vec<DntcFile>>, Box<dyn std::error::Error>> {
-        let client = Client::new();
         let config = config::Config::load_or_new()?;
         match config.remote_file_repository {
             Some(_) => {
