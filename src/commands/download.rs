@@ -91,7 +91,7 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
                 match _response_bill {
                     BillReturnType::BillWithFiles(response) => {
                         let mut _result = fm
-                            .download(&client, &response)
+                            .download(&client, &response, bill)
                             .await
                             .unwrap()
                             .unwrap_or_default();

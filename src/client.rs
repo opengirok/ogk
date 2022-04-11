@@ -122,9 +122,9 @@ pub struct DtlVo {
     pub mberId: String, // 사용자이름 // ex) opengirok
 
     // pub procCd: String,             // [empty]
-    pub prcsInsttCd: String, // *처리기관 코드 ex) 6110000
-    pub prcsInsttNm: String, // *처리기관 이름 short ver ex) 서울특별시
-    // pub prcsFullInsttNm: String,    // [empty]
+    pub prcsInsttCd: String,        // *처리기관 코드 ex) 6110000
+    pub prcsInsttNm: String,        // *처리기관 이름 short ver ex) 서울특별시
+    pub prcsFullInsttNm: String,    // *처리기관 이름 long ver
     pub procCn: String,             // 통지 결과 상태
     pub procDt: String,             // 통지 일자
     pub procRegstrNo: String,       // *세부 페이지 요청에 필요한 번호
@@ -174,11 +174,10 @@ pub enum BillReturnType {
 }
 
 impl Downloadable for BillWithFiles {
-    fn get_filename(&self, orig_file_name: &str) -> String {
+    fn get_filename(&self, prcs_full_instt_nm: &str, orig_file_name: &str) -> String {
         FileManager::make_filename(
             &self.dtlVo.rqestProcRegstrNo.trim(),
-            &self.dtlVo.prcsInsttNm.trim(),
-            &self.dtlVo.insttRqestProcStNm.trim(),
+            prcs_full_instt_nm,
             orig_file_name.trim(),
         )
     }

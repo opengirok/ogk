@@ -1,4 +1,4 @@
-use crate::client::{BillWithFiles, Client, DntcFile};
+use crate::client::{BillWithFiles, Client, DntcFile, DtlVo};
 use crate::utils::{config, date};
 use async_trait::async_trait;
 use bytes::Bytes;
@@ -104,6 +104,7 @@ impl<'a> FileManager<'a> {
         &self,
         client: &Client,
         bill: &BillWithFiles,
+        bill_from_list: &DtlVo,
     ) -> Result<Option<Vec<DntcFile>>, Box<dyn std::error::Error>> {
         let config = config::Config::load_or_new()?;
         match config.remote_file_repository {
@@ -113,9 +114,16 @@ impl<'a> FileManager<'a> {
 
                 if let Some(ref file_list) = bill.atchFileList {
                     for file in &*file_list {
-                        if fm.has_downloaded(bill, &file.uploadFileOrginlNm) == false {
+                        if fm.has_downloaded(bill, bill_from_list, &file.uploadFileOrginlNm)
+                            == false
+                        {
                             let downloaded = client.download_file(file).await?;
-                            let _ = fm.save(&downloaded, bill, &file.uploadFileOrginlNm);
+                            let _ = fm.save(
+                                &downloaded,
+                                bill,
+                                bill_from_list,
+                                &file.uploadFileOrginlNm,
+                            );
                             downloaded_files.push(file.clone());
                         }
                     }
@@ -152,34 +160,33 @@ impl<'a> FileManager<'a> {
     pub fn make_filename(
         registration_number: &str,
         rqest_full_instt_name: &str,
-        proc_org_name: &str,
         file_name: &str,
     ) -> String {
         let re_illegal_symbols = Regex::new("[\"\n \t()\'~]").unwrap();
         let re_retouch = Regex::new("_+").unwrap();
 
         format!(
-            "{}_{}_{}_{}",
+            "{}_{}_{}",
             registration_number,
             rqest_full_instt_name.replace(" ", "_"),
-            proc_org_name.replace(" ", ""),
             re_retouch
                 .replace_all(&re_illegal_symbols.replace_all(file_name.trim(), "_"), "_",)
                 .to_string()
         )
     }
 
-    pub fn save<T: Downloadable>(
+    pub fn save(
         &self,
         downloaded_file: &Bytes,
-        downloadable_bill: &T,
+        downloadable_bill: &BillWithFiles,
+        bill_from_list: &DtlVo,
         orig_file_name: &str,
     ) -> Result<File, Box<dyn std::error::Error>> {
         let dir_path = format!("{}/{}", &self._local_path, downloadable_bill.get_dirname(),);
         let file_path = format!(
             "{}/{}",
             &dir_path,
-            downloadable_bill.get_filename(orig_file_name)
+            downloadable_bill.get_filename(&bill_from_list.prcsFullInsttNm, orig_file_name)
         );
 
         create_dir(Path::new(&dir_path)).unwrap_or_default();
@@ -188,12 +195,17 @@ impl<'a> FileManager<'a> {
         Ok(local_file)
     }
 
-    fn has_downloaded<T: Downloadable>(&self, downloadable_bill: &T, orig_file_name: &str) -> bool {
+    fn has_downloaded<T: Downloadable>(
+        &self,
+        downloadable_bill: &T,
+        bill_from_list: &DtlVo,
+        orig_file_name: &str,
+    ) -> bool {
         let dir_path = format!("{}/{}", &self._local_path, downloadable_bill.get_dirname(),);
         let file_path = format!(
             "{}/{}",
             &dir_path,
-            downloadable_bill.get_filename(orig_file_name)
+            downloadable_bill.get_filename(&bill_from_list.prcsFullInsttNm, orig_file_name)
         );
 
         return Path::new(&file_path).exists();
@@ -272,6 +284,6 @@ impl<'a> FileManager<'a> {
 
 #[async_trait]
 pub trait Downloadable {
-    fn get_filename(&self, orig_file_name: &str) -> String;
+    fn get_filename(&self, prcs_full_instt_nm: &str, orig_file_name: &str) -> String;
     fn get_dirname(&self) -> String;
 }
