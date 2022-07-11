@@ -145,6 +145,7 @@ mod tests {
       // procCd: String,             // [empty]
       prcsInsttCd: format!("test"),
       prcsInsttNm: format!("test"),
+      prcsFullInsttNm: format!("test"),
       // prcsFullInsttNm: String,    // [empty]
       procCn: format!("test"),
       procDt: format!("test"),
