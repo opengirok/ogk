@@ -1,8 +1,6 @@
 use crate::client::{self, BillReturnType, DntcFile};
 use crate::files::FileManager;
-use crate::utils::date;
-use crate::utils::log;
-use crate::utils::progress;
+use crate::utils::{date, log, progress};
 use chrono::prelude::*;
 use clap::Args;
 use indicatif::{HumanDuration, ProgressBar};
@@ -20,6 +18,7 @@ pub struct Commands {
 }
 
 pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
+
     let from_date = match &args.from {
         Some(date) => date.to_owned(),
         None => date::KstDateTime::from(Utc::now()).format(Some("%Y-%m-%d")),
@@ -44,7 +43,7 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
 
     log::print(
         &format!(
-            "DOWNLOAD [1/4] {}{} ~ {} 기간 동안의 청구 내역을 조회합니다.",
+            "DOWNLOAD [1/5] {}{} ~ {} 기간 동안의 청구 내역을 조회합니다.",
             progress::LOOKING_GLASS,
             &from_date,
             &to_date
@@ -62,7 +61,18 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
 
     log::print(
         &format!(
-            "DOWNLOAD [2/4] {}청구 내역 {}건 중 공개된 파일을 찾아 다운로드 합니다.",
+            "DOWNLOAD [2/5] {}다운로드 받기 전 원격 저장소 최신 정보를 확인합니다.",
+            progress::HAND_WITH_EYE,
+        ),
+        &print_type,
+    )
+    .await;
+
+    fm.sync_with_remote().await;
+
+    log::print(
+        &format!(
+            "DOWNLOAD [3/5] {}청구 내역 {}건 중 공개된 파일을 찾아 다운로드 합니다.",
             progress::DISK,
             total_count
         ),
@@ -105,7 +115,7 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
 
             log::print(
                 &format!(
-                    "DOWNLOAD [3/4] {}다운로드한 총 {}개의 파일을 원격 저장소에 저장합니다.",
+                    "DOWNLOAD [4/5] {}다운로드한 총 {}개의 파일을 원격 저장소에 저장합니다.",
                     progress::WRITE,
                     downloaded_files.len()
                 ),
@@ -130,7 +140,7 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
 
     log::print(
         &format!(
-            "DOWNLOAD [4/4] {}다운로드 및 원격 저장소 업로드 완료! - {}\n{}",
+            "DOWNLOAD [5/5] {}다운로드 및 원격 저장소 업로드 완료! - {}\n{}",
             progress::SPARKLE,
             HumanDuration(started.elapsed()),
             &downloaded_file_names

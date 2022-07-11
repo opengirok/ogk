@@ -228,42 +228,32 @@ impl<'a> FileManager<'a> {
     }
 
     pub async fn sync_with_remote(
-        &self,
-        config: &config::Config,
+        &self
     ) -> Result<(), Box<dyn Error>> {
-        match config.remote_file_repository {
-            Some(_) => {
-                let repo = match Repository::open(&self._local_path) {
-                    Ok(repo) => repo,
-                    Err(e) => panic!("파일 저장소를 불러오는데 실패하였습니다.: {}", e),
-                };
+        let repo = match Repository::open(&self._local_path) {
+            Ok(repo) => repo,
+            Err(e) => panic!("파일 저장소를 불러오는데 실패하였습니다.: {}", e),
+        };
 
 
-                let callbacks = self.remote_callbaks();
-                let mut po = git2::FetchOptions::new();
-                let mut po = po.remote_callbacks(callbacks);
+        let callbacks = self.remote_callbaks();
+        let mut po = git2::FetchOptions::new();
+        let mut po = po.remote_callbacks(callbacks);
 
-                repo.find_remote("origin")?.fetch(&["main"], Some(&mut po), None);
-                let fetch_head = repo.find_reference("FETCH_HEAD")?;
-                let fetch_commit = repo.reference_to_annotated_commit(&fetch_head)?;
-                let analysis = repo.merge_analysis(&[&fetch_commit])?;
-                if analysis.0.is_up_to_date() {
-                    Ok(())
-                } else {
-                    let refname = format!("refs/heads/main");
-                    let mut reference = repo.find_reference(&refname)?;
-                    reference.set_target(fetch_commit.id(), "Fast-Forward")?;
-                    repo.set_head(&refname)?;
-                    repo.checkout_head(Some(git2::build::CheckoutBuilder::default().force()));
+        repo.find_remote("origin")?.fetch(&["main"], Some(&mut po), None);
+        let fetch_head = repo.find_reference("FETCH_HEAD")?;
+        let fetch_commit = repo.reference_to_annotated_commit(&fetch_head)?;
+        let analysis = repo.merge_analysis(&[&fetch_commit])?;
+        if analysis.0.is_up_to_date() {
+            Ok(())
+        } else {
+            let refname = format!("refs/heads/main");
+            let mut reference = repo.find_reference(&refname)?;
+            reference.set_target(fetch_commit.id(), "Fast-Forward")?;
+            repo.set_head(&refname)?;
+            repo.checkout_head(Some(git2::build::CheckoutBuilder::default().force()));
 
-                    Ok(())
-                }
-
-            }
-            None => {
-                eprintln!("청구파일을 동기화 하려면 원격저장소 주소를 먼저 설정해주세요.");
-                Ok(())
-            }
+            Ok(())
         }
     }
 
@@ -331,13 +321,12 @@ pub trait Downloadable {
 
 #[cfg(test)]
 mod tests {
-  use crate::{files::FileManager, utils::config};
+  use crate::{files::FileManager};
 
   #[tokio::test]
   async fn test_sync_with_remote() {
-    let config = config::Config::load_or_new().unwrap();
     let fm = FileManager::new().await.unwrap();
-    fm.sync_with_remote(&config).await;
+    fm.sync_with_remote().await;
   }
 
 }
