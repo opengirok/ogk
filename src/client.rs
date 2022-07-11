@@ -395,63 +395,6 @@ impl Client {
         }
     }
 
-    // pub async fn fetch_a_bill(
-    //     &self,
-    //     dtlVo: &DtlVo,
-    // ) -> Result<BillReturnType, Box<dyn std::error::Error>> {
-    //     let mut deptSn = dtlVo.deptSn.clone();
-
-    //     let host = match dtlVo.insttRqestProcStCd.as_str() {
-    //         "141" | "143" | "1411" | "1413" | "1415" | "1421" | "163" | "165" | "1861" => {
-    //             DETAIL_HOST_FOR_OPENED
-    //         }
-    //         "171" | "172" => {
-    //             deptSn = format!("");
-
-    //             if &dtlVo.othinstSmtmProcessYn == "N" {
-    //                 DETAIL_HOST_FOR_OPENED
-    //             } else {
-    //                 DETAIL_HOST_FOR_NOT_OPENED
-    //             }
-    //         }
-    //         _ => DETAIL_HOST_FOR_NOT_OPENED,
-    //     };
-
-    //     let params: [(&str, &str); 8] = [
-    //         ("rqestRceptNo", &dtlVo.rqestRceptNo),
-    //         ("rqestProcRegstrNo", &dtlVo.rqestProcRegstrNo),
-    //         ("procRegstrNo", &dtlVo.procRegstrNo),
-    //         ("insttRqestProcStCd", &dtlVo.insttRqestProcStCd),
-    //         ("deptSn", &deptSn),
-    //         ("hash", "true"),
-    //         ("multiDeptProcYn", "N"),
-    //         ("scui", &self.scui),
-    //     ];
-
-    //     let response = self.post(host, &params).await?;
-    //     let text_response = response.text().await?;
-
-    //     let regex = Regex::new(r"var result(\s+)=(\s+)(.+);").unwrap();
-    //     let mut stringified_json_result = String::from("");
-    //     for cap in regex.captures_iter(&text_response) {
-    //         stringified_json_result = String::from(&cap[3]);
-    //     }
-
-    //     if stringified_json_result != "" {
-    //         match serde_json::from_str(&stringified_json_result) {
-    //             Ok(result) => {
-    //                 return Ok(BillReturnType::BillWithFiles(result));
-    //             }
-    //             Err(_) => {
-    //                 let wrong_result: RedirectedBillWithFiles =
-    //                     serde_json::from_str(&stringified_json_result).unwrap();
-    //                 return Ok(BillReturnType::RedirectedBillWithFiles(wrong_result));
-    //             }
-    //         };
-    //     } else {
-    //         return Ok(BillReturnType::None);
-    //     }
-    // }
 
     pub async fn fetch_bills(
         &self,
