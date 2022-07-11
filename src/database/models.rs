@@ -13,6 +13,7 @@ pub struct BillRow {
     pub proc_org_dept_phone: Option<String>,
     pub proc_org_dept_name: Option<String>,
     pub proc_org_name: Option<String>,
+    pub proc_org_full_name: Option<String>,
     pub proc_person_class: Option<String>,
     pub proc_person_name: Option<String>,
 
@@ -77,6 +78,7 @@ impl BillRow {
             proc_org_dept_name: Some(bill.opetrDeptNm.clone()),
             proc_org_dept_phone: Some(bill.opetrCbleTelno.clone()),
             proc_org_name: Some(bill.prcsInsttNm.clone()),
+            proc_org_full_name: Some(bill.prcsFullInsttNm.clone()),
             proc_person_class: Some(bill.opetrClsfNm.clone()),
             proc_person_name: Some(bill.opetrFnm.clone()),
             registration_number: bill.rqestRceptNo.clone(),
