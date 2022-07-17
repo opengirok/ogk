@@ -216,6 +216,9 @@ impl Client {
         );
         headers.insert("Host", "www.open.go.kr".parse().unwrap());
         headers.insert("Origin", "https://www.open.go.kr".parse().unwrap());
+        headers.insert("Connection", "keep-alive".parse().unwrap());
+        headers.insert("Sec-Fetch-Site", "same-origin".parse().unwrap());
+        headers.insert("X-Requested-With", "XMLHttpRequest".parse().unwrap());
         headers.insert(
             "User-Agent",
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:80.0) Gecko/20100101 Firefox/80.0"
@@ -395,7 +398,6 @@ impl Client {
         }
     }
 
-
     pub async fn fetch_bills(
         &self,
         page: &i32,
@@ -403,14 +405,16 @@ impl Client {
         to_date: &str,
         page_count: &i32,
     ) -> Result<Bills, Error> {
-        let params: [(&str, &str); 9] = [
+        let params: [(&str, &str); 11] = [
             ("stRceptDt", from_date),
             ("edRceptDt", to_date),
-            ("searchYn", "Y"),
-            ("selRowPage", &page_count.to_string()),
-            ("moveStatus", "L"),
             ("viewPage", &page.to_string()),
+            ("totalPage", "0"),
+            ("selRowPage", &page_count.to_string()),
             ("rowPage", &page_count.to_string()),
+            ("sort", "rqestDtList"),
+            ("searchYn", "Y"),
+            ("moveStatus", "L"),
             ("chkDate", "nonClass"),
             ("scui", &self.scui),
         ];
