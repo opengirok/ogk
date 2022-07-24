@@ -90,6 +90,14 @@ ogk sync --from 2021-01-01 --to 2021-12-31
 ogk sync
 ```
 
+### TroubleShooting
+
+1. ubuntu 환경에서는 `pkg-config`, `libssl-dev` 설치가 필요합니다.
+    ```
+    sudo apt-get install pkg-config libssl-dev
+    ```
+ 
+
 ### Roadmap
 
 ##### 1. 계정 보안
@@ -107,7 +115,7 @@ ogk sync
 <a href="https://www.buymeacoffee.com/pretty00butt" target="_blank">
 <img src="https://user-images.githubusercontent.com/1366161/156967861-490ed2cb-fa3c-4ef1-acee-6b7649ccdcf9.png" width="25%" />
 </a>
- 
+
 ### License
 
 [MIT License](LICENSE)
