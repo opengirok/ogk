@@ -1,7 +1,7 @@
 use crate::client;
 use async_trait::async_trait;
 use serde::Serialize;
-use std::fmt::Debug;
+use std::fmt::{Debug};
 use std::marker::Send;
 
 pub mod models;
@@ -38,7 +38,13 @@ pub async fn create_bills<C: DatabaseClient>(
 
   let response = database_client.post("bills", bills).await;
   match response {
-    Ok(result) => result.json::<Vec<models::BillRow>>().await,
+    Ok(result) => {
+      if result.status() != 201 {
+        panic!("Supabase 업로드에 실패하였습니다\n상태코드: {}", result.status())
+      }
+
+      result.json::<Vec<models::BillRow>>().await
+    }
     Err(e) => {
       eprintln!("{}", e);
       Err(e)

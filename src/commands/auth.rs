@@ -19,7 +19,7 @@ pub enum Commands {
 }
 
 async fn login(username: &str, password: &str) -> Result<(), Box<dyn std::error::Error>> {
-    let mut client = client::Client::new();
+    let mut client = client::Client::new().await?;
     let _ = client.auth(username, password).await?;
 
     let config = AuthConfig::new(username, password);

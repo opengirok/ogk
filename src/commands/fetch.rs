@@ -29,7 +29,7 @@ async fn fetch_bills(
     to_date: &str,
     page_size: &i32,
 ) -> Result<(), Box<dyn Error>> {
-    let mut client = client::Client::new();
+    let mut client = client::Client::new().await?;
     client.auth_from_storage().await?;
 
     println!("{}, {}, {}", page, from_date, to_date);

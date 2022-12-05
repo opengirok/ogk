@@ -17,6 +17,11 @@ const DETAIL_HOST_FOR_OPENED: &str =
 const DOWNLOAD_HOST: &str = "https://www.open.go.kr/util/FileDownload.do";
 
 #[derive(serde::Deserialize, Debug)]
+struct CsrfTokenResponse {
+    csrfToken: String
+}
+
+#[derive(serde::Deserialize, Debug)]
 pub struct AuthResponseModelAndViewModelResultRtnV0 {
     pub accesType: String,
     pub addr1: String,
@@ -197,10 +202,11 @@ pub struct Bills {
 pub struct Client {
     client: reqwest::Client,
     scui: String,
+    csrf_token: String,
 }
 
 impl Client {
-    pub fn new() -> Self {
+    pub async fn new() -> Result<Self, Error> {
         let mut headers = header::HeaderMap::new();
         headers.insert(
             "Accept",
@@ -232,12 +238,24 @@ impl Client {
             .build()
             .unwrap();
 
+        let response =  client.get("https://www.open.go.kr/com/login/memberLogin.do").send().await?;
+        let text_response = response.text().await?;
+
+        let regex = Regex::new(r"var result(\s+)=(\s+)(.+);").unwrap();
+        let mut stringified_json_result = String::from("");
+        for cap in regex.captures_iter(&text_response) {
+            stringified_json_result = String::from(&cap[3]);
+        }
+
+        let csrf_token_response: CsrfTokenResponse = serde_json::from_str(&stringified_json_result).unwrap();
+
         let scui = "";
 
-        Client {
+        Ok(Client {
             client,
+            csrf_token: csrf_token_response.csrfToken,
             scui: scui.to_owned(),
-        }
+        })
     }
 
     pub async fn auth(
@@ -245,7 +263,7 @@ impl Client {
         username: &str,
         password: &str,
     ) -> Result<(), Box<dyn std::error::Error>> {
-        let auth: [(&str, &str); 3] = [("mberId", username), ("pwd", password), ("agent", "PC")];
+        let auth: [(&str, &str); 5] = [("mberId", username), ("pwd", password), ("agent", "PC"), ("_csrf", &self.csrf_token), ("csrf", &self.csrf_token)];
         let response = self.client.post(LOGIN_HOST).form(&auth).send().await?;
         match response.json::<AuthResponse>().await {
             Ok(response_json) => {
@@ -279,9 +297,11 @@ impl Client {
                     return Ok(());
                 }
 
+                println!("{}", response_json.modelAndView.model.result.error_msg);
                 panic!("사용자이름과 비밀번호를 확인해주세요.");
             }
-            Err(_) => {
+            Err(e) => {
+                println!("{}", e.to_string());
                 panic!("사용자이름과 비밀번호를 확인해주세요.");
             }
         }

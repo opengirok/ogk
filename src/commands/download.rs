@@ -35,7 +35,7 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
     }
 
     let started = Instant::now();
-    let mut client = client::Client::new();
+    let mut client = client::Client::new().await?;
     client.auth_from_storage().await?;
 
     let init_page = 1 as i32;

@@ -29,7 +29,7 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
     print_type = log::PrintType::SLACK;
   }
 
-  let mut client = client::Client::new();
+  let mut client = client::Client::new().await?;
   client.auth_from_storage().await?;
 
   let started = Instant::now();
