@@ -43,7 +43,8 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
   if date_from == "" && date_to == "" {
     log::print(
             &format!(
-                "SYNC [1/3] {}SUPABASE 데이터베이스에 저장된 청구건들 중 아직 통지완료되지 않은 건들을 조회합니다.",
+                "[{}] SYNC [1/3] {}SUPABASE 데이터베이스에 저장된 청구건들 중 아직 통지완료되지 않은 건들을 조회합니다.",
+                client.username,
                 progress::LOOKING_GLASS,
             ),
             &log::PrintType::DEFAULT,
@@ -61,7 +62,8 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
 
     log::print(
       &format!(
-        "SYNC [2/3] {}총 {}건의 각 청구건의 최신 통지 상태를 조회합니다.",
+        "[{}] SYNC [2/3] {}총 {}건의 각 청구건의 최신 통지 상태를 조회합니다.",
+        client.username,
         progress::TRUCK,
         &bill_rows.len(),
       ),
@@ -95,7 +97,8 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
     pb.finish_and_clear();
     log::print(
       &format!(
-        "SYNC [3/3] {}조회한 내역을 데이터베이스에 저장합니다.",
+        "[{}] SYNC [3/3] {}조회한 내역을 데이터베이스에 저장합니다.",
+        client.username,
         progress::DISK,
       ),
       &print_type,
@@ -117,7 +120,8 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
 
   log::print(
     &format!(
-      "SYNC [1/3] {}{}~{} 청구 내역을 확인합니다.",
+      "[{}] SYNC [1/3] {}{}~{} 청구 내역을 확인합니다.",
+      client.username,
       progress::LOOKING_GLASS,
       date_from,
       date_to,
@@ -142,7 +146,8 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
 
   log::print(
     &format!(
-      "SYNC [2/3] {}청구 내역 {}건을 조회합니다.",
+      "[{}] SYNC [2/3] {}청구 내역 {}건을 조회합니다.",
+      client.username,
       progress::TRUCK,
       total_count
     ),
@@ -210,7 +215,8 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
 
       log::print(
         &format!(
-          "SYNC [3/3] {}조회한 내역을 데이터베이스에 저장합니다.",
+          "[{}] SYNC [3/3] {}조회한 내역을 데이터베이스에 저장합니다.",
+          client.username,
           progress::DISK,
         ),
         &print_type,
@@ -221,7 +227,8 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
 
       log::print(
         &format!(
-          "SYNC {} 총 {}건 동기화 완료! - {}",
+          "[{}] SYNC {} 총 {}건 동기화 완료! - {}",
+          client.username,
           progress::SPARKLE,
           total_count,
           HumanDuration(started.elapsed())

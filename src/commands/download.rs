@@ -43,7 +43,8 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
 
     log::print(
         &format!(
-            "DOWNLOAD [1/5] {}{} ~ {} 기간 동안의 청구 내역을 조회합니다.",
+            "[{}] DOWNLOAD [1/5] {}{} ~ {} 기간 동안의 청구 내역을 조회합니다.",
+            client.username,
             progress::LOOKING_GLASS,
             &from_date,
             &to_date
@@ -61,7 +62,8 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
 
     log::print(
         &format!(
-            "DOWNLOAD [2/5] {}다운로드 받기 전 원격 저장소 최신 정보를 확인합니다.",
+            "[{}] DOWNLOAD [2/5] {} 다운로드 받기 전 원격 저장소 최신 정보를 확인합니다.",
+            client.username,
             progress::HAND_WITH_EYE,
         ),
         &print_type,
@@ -72,7 +74,8 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
 
     log::print(
         &format!(
-            "DOWNLOAD [3/5] {}청구 내역 {}건 중 공개된 파일을 찾아 다운로드 합니다.",
+            "[{}] DOWNLOAD [3/5] {}청구 내역 {}건 중 공개된 파일을 찾아 다운로드 합니다.",
+            client.username,
             progress::DISK,
             total_count
         ),
@@ -115,7 +118,8 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
 
             log::print(
                 &format!(
-                    "DOWNLOAD [4/5] {}다운로드한 총 {}개의 파일을 원격 저장소에 저장합니다.",
+                    "[{}] DOWNLOAD [4/5] {}다운로드한 총 {}개의 파일을 원격 저장소에 저장합니다.",
+                    client.username,
                     progress::WRITE,
                     downloaded_files.len()
                 ),
@@ -140,7 +144,8 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
 
     log::print(
         &format!(
-            "DOWNLOAD [5/5] {}다운로드 및 원격 저장소 업로드 완료! - {}\n{}",
+            "[{}] DOWNLOAD [5/5] {} 다운로드 및 원격 저장소 업로드 완료! - {}\n{}",
+            client.username,
             progress::SPARKLE,
             HumanDuration(started.elapsed()),
             &downloaded_file_names

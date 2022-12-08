@@ -200,6 +200,8 @@ pub struct Bills {
 
 #[derive(Debug)]
 pub struct Client {
+    pub username: String,
+
     client: reqwest::Client,
     scui: String,
     csrf_token: String,
@@ -250,8 +252,10 @@ impl Client {
         let csrf_token_response: CsrfTokenResponse = serde_json::from_str(&stringified_json_result).unwrap();
 
         let scui = "";
+        let username: &str = "";
 
         Ok(Client {
+            username: username.to_owned(),
             client,
             csrf_token: csrf_token_response.csrfToken,
             scui: scui.to_owned(),
@@ -263,7 +267,10 @@ impl Client {
         username: &str,
         password: &str,
     ) -> Result<(), Box<dyn std::error::Error>> {
+        self.username = username.to_owned();
+
         let auth: [(&str, &str); 5] = [("mberId", username), ("pwd", password), ("agent", "PC"), ("_csrf", &self.csrf_token), ("csrf", &self.csrf_token)];
+
         let response = self.client.post(LOGIN_HOST).form(&auth).send().await?;
         match response.json::<AuthResponse>().await {
             Ok(response_json) => {
