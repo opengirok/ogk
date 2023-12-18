@@ -142,7 +142,7 @@ impl<'a> FileManager<'a> {
 
     // {접수일자}_{청구_제묵}
     pub fn make_dirname(request_date: &str, request_subject: &str) -> String {
-        let re_illegal_symbols = Regex::new("[.\"\n \t()\'~]").unwrap();
+        let re_illegal_symbols = Regex::new("[.\"\n \t()\'~\u{1c}]").unwrap();
         let re_retouch = Regex::new("_+").unwrap();
         format!(
             "{}_{}",
@@ -162,7 +162,7 @@ impl<'a> FileManager<'a> {
         rqest_full_instt_name: &str,
         file_name: &str,
     ) -> String {
-        let re_illegal_symbols = Regex::new("[\"\n \t()\'~]").unwrap();
+        let re_illegal_symbols = Regex::new("[\"\n \t()\'?~\u{1c}]").unwrap();
         let re_retouch = Regex::new("_+").unwrap();
 
         format!(
@@ -227,20 +227,18 @@ impl<'a> FileManager<'a> {
         return callbacks;
     }
 
-    pub async fn sync_with_remote(
-        &self
-    ) -> Result<(), Box<dyn Error>> {
+    pub async fn sync_with_remote(&self) -> Result<(), Box<dyn Error>> {
         let repo = match Repository::open(&self._local_path) {
             Ok(repo) => repo,
             Err(e) => panic!("파일 저장소를 불러오는데 실패하였습니다.: {}", e),
         };
 
-
         let callbacks = self.remote_callbaks();
         let mut po = git2::FetchOptions::new();
         let mut po = po.remote_callbacks(callbacks);
 
-        repo.find_remote("origin")?.fetch(&["main"], Some(&mut po), None);
+        repo.find_remote("origin")?
+            .fetch(&["main"], Some(&mut po), None);
         let fetch_head = repo.find_reference("FETCH_HEAD")?;
         let fetch_commit = repo.reference_to_annotated_commit(&fetch_head)?;
         let analysis = repo.merge_analysis(&[&fetch_commit])?;
@@ -256,7 +254,6 @@ impl<'a> FileManager<'a> {
             Ok(())
         }
     }
-
 
     pub async fn upload(&self) -> Result<Oid, git2::Error> {
         let callbacks = self.remote_callbaks();
@@ -321,12 +318,11 @@ pub trait Downloadable {
 
 #[cfg(test)]
 mod tests {
-  use crate::{files::FileManager};
+    use crate::files::FileManager;
 
-  #[tokio::test]
-  async fn test_sync_with_remote() {
-    let fm = FileManager::new().await.unwrap();
-    fm.sync_with_remote().await;
-  }
-
+    #[tokio::test]
+    async fn test_sync_with_remote() {
+        let fm = FileManager::new().await.unwrap();
+        fm.sync_with_remote().await;
+    }
 }

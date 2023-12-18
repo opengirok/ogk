@@ -7,6 +7,7 @@ mod files;
 mod utils;
 
 use clap::Parser;
+use dotenv::dotenv;
 use std::error::Error;
 
 #[derive(Parser)]
@@ -20,6 +21,8 @@ struct Cli {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
+    dotenv().ok();
+
     let args = Cli::parse();
     let _result = commands::run(&args.command).await;
     Ok(())
