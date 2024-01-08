@@ -18,7 +18,6 @@ pub struct Commands {
 }
 
 pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
-
     let from_date = match &args.from {
         Some(date) => date.to_owned(),
         None => date::KstDateTime::from(Utc::now()).format(Some("%Y-%m-%d")),
@@ -62,7 +61,7 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
 
     log::print(
         &format!(
-            "[{}] DOWNLOAD [2/5] {} 다운로드 받기 전 원격 저장소 최신 정보를 확인합니다.",
+            "[{}] DOWNLOAD [2/5] {}다운로드 받기 전 원격 저장소 최신 정보를 확인합니다.",
             client.username,
             progress::HAND_WITH_EYE,
         ),
