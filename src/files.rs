@@ -142,7 +142,7 @@ impl<'a> FileManager<'a> {
 
     // {접수일자}_{청구_제묵}
     pub fn make_dirname(request_date: &str, request_subject: &str) -> String {
-        let re_illegal_symbols = Regex::new("[.\"\n \t()\'~\u{1c}]").unwrap();
+        let re_illegal_symbols = Regex::new("[,<>\"\n \t()\'?~\u{1c}]").unwrap();
         let re_retouch = Regex::new("_+").unwrap();
         format!(
             "{}_{}",
@@ -162,7 +162,7 @@ impl<'a> FileManager<'a> {
         rqest_full_instt_name: &str,
         file_name: &str,
     ) -> String {
-        let re_illegal_symbols = Regex::new("[\"\n \t()\'?~\u{1c}]").unwrap();
+        let re_illegal_symbols = Regex::new("[<>,\"\n \t()\'?~\u{1c}]").unwrap();
         let re_retouch = Regex::new("_+").unwrap();
 
         format!(

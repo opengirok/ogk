@@ -13,7 +13,7 @@ use std::error::Error;
 #[derive(Parser)]
 #[clap(name = "ogk")]
 #[clap(about = "cli for open.go.kr", long_about = None)]
-#[clap(author = "pretty00butt@protonmail.com", long_about = None)]
+#[clap(author = "hoonyland.newsletter@gmail.com", long_about = None)]
 struct Cli {
     #[clap(subcommand)]
     command: commands::Commands,
