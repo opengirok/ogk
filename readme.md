@@ -8,14 +8,7 @@
 
 
 ### 설치하기
-: 현재 `ogk`는 [Homebrew](https://brew.sh/) 혹은 [Cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html)를 통해서 설치가 가능합니다.
-
-##### `homebrew`
-
-```bash
-brew tap opengirok/ogk
-brew install ogk
-```
+: 현재 `ogk`는 [Cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html)를 통해서 설치가 가능합니다.
 
 ##### `cargo`
 
