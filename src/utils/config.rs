@@ -1,18 +1,23 @@
 use dirs::home_dir;
 use serde::{Deserialize, Serialize};
-use std::env;
 use std::error::Error;
 use std::fmt;
 use std::fs::{create_dir_all, read_to_string, File};
 use std::io::prelude::*;
 use std::path::Path;
 
-use crate::database::supabase::{ENV_VAR_SUPABASE_API_KEY, ENV_VAR_SUPABASE_HOST};
-
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Config {
+    // files
     pub local_file_repository: Option<String>,
     pub remote_file_repository: Option<String>,
+
+    // sync
+    pub supabase_host: Option<String>,
+    pub supabase_api_key: Option<String>,
+
+    // integration
+    pub slack_webhook_url: Option<String>,
 }
 
 impl fmt::Display for Config {
@@ -27,20 +32,25 @@ impl fmt::Display for Config {
             None => format!("⚠️  NOT CONFIGURED ⚠️"),
         };
 
-        let api_key = match env::var(ENV_VAR_SUPABASE_API_KEY) {
-            Ok(_api_key) => _api_key,
-            Err(_) => format!("not_configured"),
+        let _supabase_host = match &self.supabase_host {
+            Some(rr) => format!("{}", rr),
+            None => format!("⚠️  NOT CONFIGURED ⚠️"),
         };
 
-        let host = match env::var(ENV_VAR_SUPABASE_HOST) {
-            Ok(_host) => _host,
-            Err(_) => format!("not_configured"),
+        let _supabase_api_key = match &self.supabase_api_key {
+            Some(rr) => format!("{}", rr),
+            None => format!("⚠️  NOT CONFIGURED ⚠️"),
+        };
+
+        let _slack_webhook_url = match &self.slack_webhook_url {
+            Some(rr) => format!("{}", rr),
+            None => format!("⚠️  NOT CONFIGURED ⚠️"),
         };
 
         write!(
       f,
-      "🗄  FILES:\nlocal file repository: {}\nremote file repository(github): {}\n\n💾 DATABASE(supabase)\nhost: {}\napi_key: {}",
-      _local_file_repository, _remote_file_repository, &host, &api_key
+      "🗄  FILES:\nlocal file repository: {}\nremote file repository(github): {}\n\n💾 DATABASE(supabase)\nhost: {}\napi_key: {}\n\n🔌 INTEGRATION\nSLACK WEBHOOK URL: {}",
+      _local_file_repository, _remote_file_repository, _supabase_host, _supabase_api_key, _slack_webhook_url
     )
     }
 }
@@ -51,6 +61,11 @@ impl Config {
         Config {
             local_file_repository: Some(Config::default_local_repository()),
             remote_file_repository: None,
+
+            supabase_host: None,
+            supabase_api_key: None,
+
+            slack_webhook_url: None,
         }
     }
 

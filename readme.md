@@ -43,14 +43,14 @@ ogk config files --remote-repository <user_or_org-name/repository_name>
 
 # 3. supabase (데이터베이스) 설정
 # [Supabase 설정하기](docs/supabase.md) 문서를 참고하여 Supabase 설정을 먼저 완료하시길 바랍니다.
-# 위 설정 후 Supabase에서 발급받은 host, api key를 환경변수로 등록합니다.
-export OGK_SUPABASE_API_KEY=
-export OGK_SUPABASE_HOST=
+# 위 설정 후 Supabase에서 발급받은 host, api key를 등록합니다.
+ogk config sync --supabase-host https://****.supabase.co
+ogk config sync --supabase-api-key ****
 
 # 4. SLACK 알림 설정
-# Slack Webhook을 생성한 뒤 URL을 환경변수로 설정합니다.
+# Slack Webhook을 생성한 뒤 URL을 설정합니다.
 # 각 명령 뒤에 `--with-slack-notification true` 를 붙이면 슬랙 알림이 함께 갑니다.
-export OGK_SLACK_WEBHOOK_URL=
+ogk config integration --slack-webhook-url https://****.slack.com
 
 ```
 

@@ -3,6 +3,7 @@
 use crate::files::{Downloadable, FileManager};
 use crate::utils::auth::AuthConfig;
 
+use base64::{engine::general_purpose, Engine as _};
 use bytes::Bytes;
 use regex::Regex;
 use reqwest::{self, header, Error};
@@ -18,7 +19,7 @@ const DOWNLOAD_HOST: &str = "https://www.open.go.kr/util/FileDownload.do";
 
 #[derive(serde::Deserialize, Debug)]
 struct CsrfTokenResponse {
-    csrfToken: String
+    csrfToken: String,
 }
 
 #[derive(serde::Deserialize, Debug)]
@@ -240,7 +241,10 @@ impl Client {
             .build()
             .unwrap();
 
-        let response =  client.get("https://www.open.go.kr/com/login/memberLogin.do").send().await?;
+        let response = client
+            .get("https://www.open.go.kr/com/login/memberLogin.do")
+            .send()
+            .await?;
         let text_response = response.text().await?;
 
         let regex = Regex::new(r"var result(\s+)=(\s+)(.+);").unwrap();
@@ -249,7 +253,8 @@ impl Client {
             stringified_json_result = String::from(&cap[3]);
         }
 
-        let csrf_token_response: CsrfTokenResponse = serde_json::from_str(&stringified_json_result).unwrap();
+        let csrf_token_response: CsrfTokenResponse =
+            serde_json::from_str(&stringified_json_result).unwrap();
 
         let scui = "";
         let username: &str = "";
@@ -269,7 +274,13 @@ impl Client {
     ) -> Result<(), Box<dyn std::error::Error>> {
         self.username = username.to_owned();
 
-        let auth: [(&str, &str); 5] = [("mberId", username), ("pwd", password), ("agent", "PC"), ("_csrf", &self.csrf_token), ("csrf", &self.csrf_token)];
+        let auth: [(&str, &str); 5] = [
+            ("mberId", username),
+            ("pwd", password),
+            ("agent", "PC"),
+            ("_csrf", &self.csrf_token),
+            ("csrf", &self.csrf_token),
+        ];
 
         let response = self.client.post(LOGIN_HOST).form(&auth).send().await?;
         match response.json::<AuthResponse>().await {
@@ -316,7 +327,8 @@ impl Client {
 
     pub async fn auth_from_storage(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         let config = AuthConfig::load()?;
-        let decoded_password = base64::decode(&config.default.password.as_bytes())?;
+        let decoded_password =
+            general_purpose::STANDARD.decode(&config.default.password.as_bytes())?;
         let password = str::from_utf8(&decoded_password)?;
         self.auth(&config.default.username, password).await?;
         Ok(())

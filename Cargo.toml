@@ -1,7 +1,7 @@
 [package]
 description = "cli tool for open.go.kr"
 name = "ogk"
-version = "1.2.1"
+version = "1.2.2"
 authors = ["hoony <hoonyland.newsletter@gmail.com>"]
 edition = "2021"
 license-file = "LICENSE"
@@ -12,29 +12,29 @@ readme = "README.md"
 
 [dependencies]
 async-trait = "0.1.52"
-base64 = "0.13.0"
-bcrypt = "0.12"
+base64 = "0.22.1"
+bcrypt = "0.15.1"
 bytes = "1.0.1"
 chrono = "0.4"
-clap = { version = "3.0.14", features = ["derive"] }
+clap = { version = "4.5.4", features = ["derive"] }
 csv = "1.1.6"
-dirs = "4.0.0"
+dirs = "5.0.1"
 dotenv = "0.15.0"
 futures = "0.3"
-git2 = "0.14"
-reqwest = { version = "0.11.1", features = [
+git2 = "0.18.3"
+reqwest = { version = "0.12.4", features = [
     "blocking",
     "cookies",
     "gzip",
     "json",
 ] }
 rust-crypto = "^0.2"
-serde = "1.0.114"
+serde = { version = "1.0.114", features = ['derive'] }
 serde_json = "1.0"
-toml = "0.5.8"
+toml = "0.8.12"
 tokio = { version = "1.2.0", features = ["full"] }
 regex = "1.5"
-indicatif = "0.16"
+indicatif = "0.17.8"
 console = "0.15"
 
 [[bin]]

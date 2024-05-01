@@ -1,15 +1,11 @@
-use crate::database::DatabaseClient;
+use crate::{database::DatabaseClient, utils::config};
 
-use std::env;
 use std::fmt::Debug;
 use std::marker::Send;
 
 use async_trait::async_trait;
 use reqwest::{self, header};
 use serde::Serialize;
-
-pub static ENV_VAR_SUPABASE_HOST: &str = "OGK_SUPABASE_HOST";
-pub static ENV_VAR_SUPABASE_API_KEY: &str = "OGK_SUPABASE_API_KEY";
 
 #[derive(Debug)]
 pub struct Supabase {
@@ -19,10 +15,14 @@ pub struct Supabase {
 
 impl Supabase {
     pub fn new() -> Self {
-        let supabase_host = env::var(ENV_VAR_SUPABASE_HOST)
-            .expect("OGK_SUPABASE_HOST 환경변수가 설정되어야 합니다.");
-        let supabase_api_key = env::var(ENV_VAR_SUPABASE_API_KEY)
-            .expect("OGK_SUPABASE_API_KEY 환경변수가 설정되어야 합니다.");
+        let _config = config::Config::load_or_new().unwrap();
+        let supabase_host = _config
+            .supabase_host
+            .expect("supabase host 를 먼저 설정해주세요.");
+        let supabase_api_key = _config
+            .supabase_api_key
+            .expect("supabase api key 를 먼저 설정해주세요.");
+
         let mut headers = header::HeaderMap::new();
 
         headers.insert(
