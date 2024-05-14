@@ -21,7 +21,9 @@ cargo install ogk
 ```bash
 # 1. 계정 설정
 # 정보공개플랫폼 계정 설정(open.go.kr에 등록된 계정이어야 합니다.)
-ogk auth login --username <username> --password <password>
+# 처음 로그인을 시도하는 <org> 정보는 이후 <default> 값으로 사용됩니다.
+# 한 번 로그인을 시도한 계정은 이후 다른 명령어를 시도할 때 <org name>만 입력하면 됩니다.
+ogk auth login --org <org name> --username <username> --password <password>
 
 
 # 2. 파일 관리 설정
@@ -77,6 +79,8 @@ ogk download --from 2021-01-01 --to 2021-12-31
 
 # 1. 기본 조회 및 저장
 ogk sync --from 2021-01-01 --to 2021-12-31
+# 1. <opengirok> 이름으로 저장된 계정 조회 및 저장
+ogk sync --org opengirok --from 2021-01-01 --to 2021-12-31
 
 # 2. 현재 설정된 Supabase 데이터베이스에서 통지완료되지 않은 건들만 새로 업데이트
 # `--from`과 `--to` 옵션을 지정하지 않습니다.
