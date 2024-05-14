@@ -3,7 +3,6 @@
 use crate::files::{Downloadable, FileManager};
 use crate::utils::auth::AuthConfig;
 
-use base64::{engine::general_purpose, Engine as _};
 use bytes::Bytes;
 use regex::Regex;
 use reqwest::{self, header, Error};
@@ -325,13 +324,33 @@ impl Client {
         }
     }
 
-    pub async fn auth_from_storage(&mut self) -> Result<(), Box<dyn std::error::Error>> {
-        let config = AuthConfig::load()?;
-        let decoded_password =
-            general_purpose::STANDARD.decode(&config.default.password.as_bytes())?;
-        let password = str::from_utf8(&decoded_password)?;
-        self.auth(&config.default.username, password).await?;
-        Ok(())
+    pub async fn auth_from_storage(
+        &mut self,
+        org: Option<&str>,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let config = AuthConfig::load_or_new()?;
+
+        match org {
+            Some(org) => {
+                let account = config.find_org(org).unwrap();
+                self.auth(
+                    &account.borrow().username,
+                    &account.borrow().get_decoded_password(),
+                )
+                .await?;
+                Ok(())
+            }
+            None => {
+                let account = config.find_org("default").unwrap();
+                self.auth(
+                    &account.borrow().username,
+                    &account.borrow().get_decoded_password(),
+                )
+                .await?;
+
+                Ok(())
+            }
+        }
     }
 
     pub async fn download_file(&self, file: &DntcFile) -> Result<Bytes, Error> {

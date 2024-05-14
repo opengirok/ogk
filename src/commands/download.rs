@@ -15,6 +15,8 @@ pub struct Commands {
     to: Option<String>,
     #[clap(long = "with-slack-notification", required = false)]
     with_slack: Option<bool>,
+    #[clap(long = "org", required = false)]
+    org: Option<String>,
 }
 
 pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
@@ -35,7 +37,7 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
 
     let started = Instant::now();
     let mut client = client::Client::new().await?;
-    client.auth_from_storage().await?;
+    client.auth_from_storage(args.org.as_deref()).await?;
 
     let init_page = 1 as i32;
     let init_count = 1 as i32;

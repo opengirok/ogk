@@ -17,18 +17,18 @@ pub enum Commands {
         to: Option<String>,
         #[clap(long = "page-size", required = false)]
         page_size: Option<i32>,
+        #[clap(long = "org", required = false)]
+        org: Option<String>,
     },
 }
 
 async fn fetch_bills(
+    client: &client::Client,
     page: &i32,
     from_date: &str,
     to_date: &str,
     page_size: &i32,
 ) -> Result<(), Box<dyn Error>> {
-    let mut client = client::Client::new().await?;
-    client.auth_from_storage().await?;
-
     println!("{}, {}, {}", page, from_date, to_date);
 
     let response = client
@@ -48,6 +48,7 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
             page,
             page_size,
             to,
+            org,
         } => {
             let from_date = match from {
                 Some(date) => date.to_owned(),
@@ -68,7 +69,10 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
                 None => 10 as i32,
             };
 
-            let _result = fetch_bills(&_page, &from_date, &to_date, &_page_size).await;
+            let mut client = client::Client::new().await?;
+            client.auth_from_storage(org.as_deref()).await?;
+
+            let _result = fetch_bills(&client, &_page, &from_date, &to_date, &_page_size).await;
         }
     }
 
