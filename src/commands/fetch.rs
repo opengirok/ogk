@@ -29,8 +29,6 @@ async fn fetch_bills(
     to_date: &str,
     page_size: &i32,
 ) -> Result<(), Box<dyn Error>> {
-    println!("{}, {}, {}", page, from_date, to_date);
-
     let response = client
         .fetch_bills(page, from_date, to_date, page_size)
         .await?;
