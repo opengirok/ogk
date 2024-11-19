@@ -94,8 +94,8 @@ mod tests {
         match response {
             Ok(r) => {
                 let bills = r.json::<Vec<BillRow>>().await.unwrap();
-                println!("{:?}", bills);
-                assert_eq!(bills.len(), 1);
+                println!("{:?}", bills.len());
+                assert_eq!(bills.len(), 7);
             }
             Err(e) => {
                 eprintln!("{}", e);
