@@ -1039,7 +1039,7 @@ dependencies = [
 
 [[package]]
 name = "ogk"
-version = "2.2.0"
+version = "2.2.1"
 dependencies = [
  "async-trait",
  "base64",
