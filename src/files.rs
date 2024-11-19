@@ -1,4 +1,5 @@
 use crate::client::{BillWithFiles, Client, DntcFile, DtlVo};
+use crate::utils::auth::AuthUser;
 use crate::utils::{config, date};
 use async_trait::async_trait;
 use bytes::Bytes;
@@ -17,6 +18,7 @@ use std::path::Path;
 static DOCUMENT: Emoji<'_, '_> = Emoji("📑  ", "");
 
 pub struct FileManager<'a> {
+    _auth_user: &'a AuthUser,
     _remote_url: String,
     _local_path: String,
     _local_repo: Option<Repository>,
@@ -24,43 +26,39 @@ pub struct FileManager<'a> {
 }
 
 impl<'a> FileManager<'a> {
-    pub async fn new() -> Result<FileManager<'a>, Box<dyn Error>> {
-        let _config = config::Config::load_or_new();
+    pub async fn new(auth_user: &'a AuthUser) -> Result<FileManager<'a>, Box<dyn Error>> {
+        let global_config = git2::Config::open_default().unwrap();
 
-        match _config {
-            Ok(config) => match config.remote_file_repository {
-                Some(remote_file_repository) => {
-                    let _remote_url = format!("git@github.com:{}", remote_file_repository);
+        let _local_path = auth_user
+            .local_repository
+            .as_ref()
+            .unwrap()
+            .clone()
+            .to_string();
+        let _remote_url = auth_user
+            .remote_repository
+            .as_ref()
+            .unwrap()
+            .clone()
+            .to_string();
 
-                    let global_config = git2::Config::open_default().unwrap();
+        let mut fm = FileManager {
+            _auth_user: auth_user,
+            _local_path,
+            _remote_url,
+            _local_repo: None,
+            _git_signature: Signature::now(
+                &global_config.get_string("user.name").unwrap(),
+                &global_config.get_string("user.email").unwrap(),
+            )
+            .unwrap(),
+        };
 
-                    let mut fm = FileManager {
-                        _local_path: config.local_file_repository.unwrap(),
-                        _remote_url: _remote_url,
-                        _local_repo: None,
-                        _git_signature: Signature::now(
-                            &global_config.get_string("user.name").unwrap(),
-                            &global_config.get_string("user.email").unwrap(),
-                        )
-                        .unwrap(),
-                    };
-
-                    if !Path::new(&fm._local_path).exists() {
-                        fm.clone_remote_repo();
-                    }
-
-                    return Ok(fm);
-                }
-                None => {
-                    eprintln!("원격 저장소를 설정해주세요.");
-                    panic!();
-                }
-            },
-            Err(_) => {
-                eprintln!("ogk 기본 설정을 먼저 진행해주세요.");
-                panic!();
-            }
+        if !Path::new(&fm._local_path).exists() {
+            fm.clone_remote_repo();
         }
+
+        Ok(fm)
     }
 
     pub fn clone_remote_repo(&mut self) -> &Option<Repository> {
@@ -102,6 +100,7 @@ impl<'a> FileManager<'a> {
 
     pub async fn download(
         &self,
+        auth_user: &AuthUser,
         client: &Client,
         bill: &BillWithFiles,
         bill_from_list: &DtlVo,
@@ -110,7 +109,7 @@ impl<'a> FileManager<'a> {
         match config.remote_file_repository {
             Some(_) => {
                 let mut downloaded_files: Vec<DntcFile> = vec![];
-                let fm = FileManager::new().await.unwrap();
+                let fm = FileManager::new(auth_user).await.unwrap();
 
                 if let Some(ref file_list) = bill.atchFileList {
                     for file in &*file_list {
@@ -318,11 +317,13 @@ pub trait Downloadable {
 
 #[cfg(test)]
 mod tests {
-    use crate::files::FileManager;
+    use crate::{files::FileManager, utils::auth::AuthConfig};
 
     #[tokio::test]
     async fn test_sync_with_remote() {
-        let fm = FileManager::new().await.unwrap();
+        let auth_config = AuthConfig::load_or_new().unwrap();
+        let auth_user = &auth_config.find_org("default").unwrap().borrow();
+        let fm = FileManager::new(auth_user).await.unwrap();
         fm.sync_with_remote().await;
     }
 }

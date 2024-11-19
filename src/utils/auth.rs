@@ -19,6 +19,9 @@ pub struct AuthUser {
     pub org: String,
     pub username: String,
     pub password: String,
+    pub local_repository: Option<String>,
+    pub remote_repository: Option<String>,
+    pub slack_webhook_url: Option<String>,
 }
 
 impl AuthConfig {
@@ -97,6 +100,75 @@ impl AuthConfig {
     pub fn find_org(&self, org: &str) -> Option<&RefCell<AuthUser>> {
         self.accounts.get(org)
     }
+
+    pub fn set_remote_repository_path(
+        &self,
+        org: &str,
+        remote_repository: &str,
+    ) -> Result<AuthConfig, Box<dyn Error>> {
+        let auth_config = AuthConfig::load_or_new().unwrap();
+        if let Some(value_refcell) = auth_config.accounts.get(org) {
+            let mut option = value_refcell.borrow_mut();
+            option.remote_repository = Some(remote_repository.to_string());
+        }
+
+        if let Some(value_refcell) = auth_config.accounts.get("default") {
+            let mut option = value_refcell.borrow_mut();
+            if option.org == org {
+                option.remote_repository = Some(remote_repository.to_string());
+            }
+        }
+
+        auth_config.save();
+
+        Ok(auth_config)
+    }
+
+    pub fn set_local_repository_path(
+        &self,
+        org: &str,
+        local_repository: &str,
+    ) -> Result<AuthConfig, Box<dyn Error>> {
+        let auth_config = AuthConfig::load_or_new().unwrap();
+        if let Some(value_refcell) = auth_config.accounts.get(org) {
+            let mut option = value_refcell.borrow_mut();
+            option.local_repository = Some(local_repository.to_string());
+        }
+
+        if let Some(value_refcell) = auth_config.accounts.get("default") {
+            let mut option = value_refcell.borrow_mut();
+            if option.org == org {
+                option.local_repository = Some(local_repository.to_string());
+            }
+        }
+
+        auth_config.save();
+
+        Ok(auth_config)
+    }
+
+    pub fn set_slack_webhook_url(
+        &self,
+        org: &str,
+        url: &str,
+    ) -> Result<AuthConfig, Box<dyn Error>> {
+        let auth_config = AuthConfig::load_or_new().unwrap();
+        if let Some(value_refcell) = auth_config.accounts.get(org) {
+            let mut option = value_refcell.borrow_mut();
+            option.slack_webhook_url = Some(url.to_string());
+        }
+
+        if let Some(value_refcell) = auth_config.accounts.get("default") {
+            let mut option = value_refcell.borrow_mut();
+            if option.org == org {
+                option.slack_webhook_url = Some(url.to_string());
+            }
+        }
+
+        auth_config.save();
+
+        Ok(auth_config)
+    }
 }
 
 impl AuthUser {
@@ -109,7 +181,9 @@ impl AuthUser {
             org: org.to_owned(),
             username: username.to_owned(),
             password: AuthUser::encode_password(password),
-            // password: general_purpose::STANDARD.encode(password.as_bytes()),
+            remote_repository: None,
+            local_repository: None,
+            slack_webhook_url: None,
         }
     }
 

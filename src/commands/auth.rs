@@ -2,6 +2,7 @@ use std::cell::RefCell;
 
 use crate::client;
 use crate::utils::auth::{AuthConfig, AuthUser};
+// use crate::utils::slack;
 use clap::Subcommand;
 
 #[derive(Subcommand)]
@@ -20,6 +21,24 @@ pub enum Commands {
     },
     #[clap(about = "list of accounts stored before")]
     List {},
+    #[clap(about = "Configuration to manage files")]
+    Files {
+        #[clap(long = "org")]
+        org: String,
+
+        #[clap(short = 'r', long = "remote")]
+        remote_repository: Option<String>,
+
+        #[clap(short = 'l', long = "local")]
+        local_repository: Option<String>,
+    },
+    #[clap(about = "Configuration for integrations")]
+    Integration {
+        #[clap(long = "org")]
+        org: String,
+        #[clap(long = "slack-webhook-url")]
+        slack_webhook_url: Option<String>,
+    },
 }
 
 async fn list() -> Result<(), Box<dyn std::error::Error>> {
@@ -53,6 +72,24 @@ async fn login_with_auth_user(
         )
         .await?;
 
+    Ok(())
+}
+
+async fn set_remote_repository_path(
+    org: &str,
+    remote_repository: &str,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let config = AuthConfig::load_or_new().unwrap();
+    let _ = config.set_remote_repository_path(org, remote_repository);
+    Ok(())
+}
+
+async fn set_local_repository_path(
+    org: &str,
+    local_repository: &str,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let config = AuthConfig::load_or_new().unwrap();
+    let _ = config.set_local_repository_path(org, local_repository);
     Ok(())
 }
 
@@ -91,6 +128,37 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn std::error::Error>> {
         }
         Commands::List {} => {
             let _result = list().await;
+        }
+        Commands::Files {
+            org,
+            remote_repository,
+            local_repository,
+        } => {
+            match remote_repository {
+                Some(remote_repository) => {
+                    let _result = set_remote_repository_path(org, remote_repository).await;
+                }
+                None => {
+                    // println!("remote_repository is required");
+                }
+            }
+
+            match local_repository {
+                Some(local_repository) => {
+                    let _result = set_local_repository_path(org, local_repository).await;
+                }
+                None => {
+                    // println!("remote_repository is required");
+                }
+            }
+        }
+        Commands::Integration {
+            org,
+            slack_webhook_url,
+        } => {
+            let auth_config = AuthConfig::load_or_new().unwrap();
+            let url = slack_webhook_url.as_ref().unwrap();
+            auth_config.set_slack_webhook_url(org, url);
         }
     }
 

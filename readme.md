@@ -29,24 +29,22 @@ ogk auth login --org <org name> --username <username> --password <password>
 # 2. 파일 관리 설정
 # 내컴퓨터에 저장할 파일 위치를 지정합니다.
 # 기본값: ~/.ogk/.data
-ogk config files --local-repository /Path/to/local/repository
+ogk auth files --org <org name> --local-repository /Path/to/local/repository
 
 # 3.에서 생성한 원격저장소 주소를 지정합니다.
-# 현재 버전(v0.1)에서는 원격저장소가 반드시 지정되어야 파일 관리가 가능합니다.
-# 예: ogk config files --remote-repository hoonyland/data
-ogk config files --remote-repository <user_or_org-name/repository_name>
+# 예: ogk auth files --org opengirok --remote-repository hoonyland/data
+ogk auth files --org <org name> --remote-repository <user_or_org-name/repository_name>
 
-# 3. supabase (데이터베이스) 설정
+
+# 4.에서 생성한 원격저장소 주소를 지정합니다.
+# 예: ogk auth files --org opengirok --remote-repository hoonyland/data
+ogk auth integration --org <org name> --slack-webhook-url <SLACK_WEBHOOK_URL>
+
+# 5. supabase (데이터베이스) 설정
 # [Supabase 설정하기](docs/supabase.md) 문서를 참고하여 Supabase 설정을 먼저 완료하시길 바랍니다.
 # 위 설정 후 Supabase에서 발급받은 host, api key를 등록합니다.
 ogk config sync --supabase-host https://****.supabase.co
 ogk config sync --supabase-api-key ****
-
-# 4. SLACK 알림 설정
-# Slack Webhook을 생성한 뒤 URL을 설정합니다.
-# 각 명령 뒤에 `--with-slack-notification true` 를 붙이면 슬랙 알림이 함께 갑니다.
-ogk config integration --slack-webhook-url https://****.slack.com
-
 ```
 
 ##### 파일 관리를 위한 요구사항
@@ -93,12 +91,6 @@ ogk sync
     ```
     sudo apt-get install pkg-config libssl-dev
     ```
- 
-
-### Roadmap
-
-##### 1. 계정 보안
-- [ ] open.go.kr 계정 관리 보안 강화
 
 ### 외부 라이브러리
 - [clap](https://docs.rs/clap/3.0.0-beta.2/clap): rust cli builder

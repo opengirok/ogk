@@ -55,7 +55,6 @@ impl fmt::Display for Config {
     }
 }
 
-// TODO: Display
 impl Config {
     pub fn new() -> Self {
         Config {

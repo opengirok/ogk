@@ -1,5 +1,6 @@
 use crate::client::{self, BillReturnType, DntcFile};
 use crate::files::FileManager;
+use crate::utils::auth::AuthConfig;
 use crate::utils::{date, log, progress};
 use chrono::prelude::*;
 use clap::Args;
@@ -20,6 +21,9 @@ pub struct Commands {
 }
 
 pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
+    let auth_config = AuthConfig::load_or_new().unwrap();
+    let org = args.org.clone().unwrap_or(String::from("default"));
+    let auth_user = &auth_config.find_org(&org).unwrap().borrow();
     let from_date = match &args.from {
         Some(date) => date.to_owned(),
         None => date::KstDateTime::from(Utc::now()).format(Some("%Y-%m-%d")),
@@ -58,7 +62,7 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
         .fetch_bills(&init_page, &from_date, &to_date, &init_count)
         .await?;
 
-    let fm = FileManager::new().await.unwrap();
+    let fm = FileManager::new(auth_user).await.unwrap();
     let total_count = &response.vo.totalPage;
 
     log::print(
@@ -105,7 +109,7 @@ pub async fn run(args: &Commands) -> Result<(), Box<dyn Error>> {
                 match _response_bill {
                     BillReturnType::BillWithFiles(response) => {
                         let mut _result = fm
-                            .download(&client, &response, bill)
+                            .download(auth_user, &client, &response, bill)
                             .await
                             .unwrap()
                             .unwrap_or_default();
