@@ -97,6 +97,11 @@ ogk sync
 - [reqwest](https://docs.rs/reqwest/0.10.10/reqwest): http client
 - [supabase](https://supabase.io): database as a service
 
+### 공개 파일 목록
+이 라이브러리를 사용하는 단체 혹은 개인 중 정보공개청구를 통해 받은 파일 목록을 공개한 단체 혹은 개인과 파일 목록
+
+- [정보공개센터](https://opengirok-openfiles.vercel.app/)
+
 ### 기여자
  
 [hoony](hoony.land)
