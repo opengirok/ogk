@@ -106,7 +106,7 @@ ogk sync
  
 [hoony](hoony.land)
 
-<a href="https://www.buymeacoffee.com/pretty00butt" target="_blank">
+<a href="https://www.buymeacoffee.com/hoony.land" target="_blank">
 <img src="https://user-images.githubusercontent.com/1366161/156967861-490ed2cb-fa3c-4ef1-acee-6b7649ccdcf9.png" width="25%" />
 </a>
 
