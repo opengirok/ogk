@@ -36,14 +36,17 @@ pub async fn create_bills<C: DatabaseClient>(
         .map(|b| models::BillRow::new(b))
         .collect();
 
-    let response = database_client.post("bills", bills).await;
+    let response = database_client
+        .post("information_disclosure_request", bills)
+        .await;
     match response {
         Ok(result) => {
             let status_code = result.status().as_u16();
             if status_code != 200 && status_code != 201 {
                 panic!(
-                    "Supabase 업로드에 실패하였습니다\n상태코드: {}",
-                    result.status()
+                    "Supabase 업로드에 실패하였습니다\n상태코드: {}\n에러: {}",
+                    result.status(),
+                    result.text().await.unwrap_or_default(),
                 )
             }
 
